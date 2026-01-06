@@ -72,8 +72,8 @@ PRODID:-//IEFP CCD 49/2025//Cronograma Janeiro 2026//PT
 CALSCALE:GREGORIAN
 `;
     aulas.forEach(a => {
-      const start = `202601${String(a.day).padStart(2,"0")}T${String(a.hour).padStart(2,"0")}0000`;
-      const end = `202601${String(a.day).padStart(2,"0")}T${String(a.hour+1).padStart(2,"0")}0000`;
+      const start = `202601\( {String(a.day).padStart(2,"0")}T \){String(a.hour).padStart(2,"0")}0000`;
+      const end = `202601\( {String(a.day).padStart(2,"0")}T \){String(a.hour+1).padStart(2,"0")}0000`;
       ics +=
 `BEGIN:VEVENT
 DTSTART:${start}
@@ -129,19 +129,64 @@ header h3{font-size:14px;margin:4px 0;font-weight:normal}
 .legend-item{display:flex;align-items:center;margin-bottom:6px}
 .legend-color{width:18px;height:18px;border:1px solid #999;margin-right:8px}
 footer{background:#2c3e50;color:#fff;text-align:center;padding:12px;margin-top:25px;font-size:12px}
+
+/* Estilos do Jogo do Galo */
+#ticTacToeContainer {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+#ticTacToeBox {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  max-width: 90%;
+}
+#ticTacToeBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-gap: 5px;
+  margin: 20px auto;
+}
+.tic-cell {
+  width: 100px;
+  height: 100px;
+  background: #f0f0f0;
+  font-size: 48px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.tic-cell:hover { background: #e0e0e0; }
+#ticStatus { font-size: 18px; margin: 10px 0; font-weight: bold; }
+#ticButtons button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 @media(min-width:768px){
 header h1{font-size:22px}
 header h2{font-size:18px}
 .calendar th,.calendar td{font-size:13px;padding:8px}
 .digital-clock{font-size:16px}
+#ticTacToeBoard { grid-template-columns: repeat(3, 120px); }
+.tic-cell { width: 120px; height: 120px; }
 }
 footer a{
-  color:#0c84f4; /* mail claro, bem visível */
+  color:#0c84f4;
   text-decoration:none;
   font-weight:500;
 }
 footer a:hover{
-  color:#ffffff; /* ainda mais claro ao passar o rato */
+  color:#ffffff;
   text-decoration:underline;
 }
 </style>
@@ -157,7 +202,10 @@ footer a:hover{
 <div><em>Formador/a:------ </em></div>
 </div>
 </header>
-<div class="pdf-button-container"><button id="downloadPdf">👉 Descarregar Horário em PDF</button></div>
+<div class="pdf-button-container">
+  <button id="downloadPdf">👉 Descarregar Horário em PDF</button>
+  <button id="playTicTacToe">🎮 Jogo do Galo (nos tempos livres)</button>
+</div>
 <div class="digital-clock"><div id="clockDisplay" class="typewriter">A carregar horário...</div></div>
 <div class="calendar-container">
 <table class="calendar" id="scheduleTable">
@@ -340,9 +388,24 @@ footer a:hover{
 <li><strong>Total:</strong> <span id="hoursTotal">0</span> horas</li>
 </ul>
 </div>
+
+<!-- Jogo do Galo -->
+<div id="ticTacToeContainer">
+  <div id="ticTacToeBox">
+    <h2>Jogo do Galo</h2>
+    <p id="ticStatus">É a tua vez (X)</p>
+    <div id="ticTacToeBoard"></div>
+    <div id="ticButtons">
+      <button id="ticRestart">Reiniciar Jogo</button>
+      <button id="ticClose">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <footer>© 2026 – CCD 49/2025 |
  Email: <a href="mailto:aprendizagem.pt@gmail.com">aprendizagem.pt@gmail.com</a>
 </footer>
+
 <script>
 function getLisbonTime(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Lisbon'}));}
 function initCountdowns(){document.querySelectorAll('.cell').forEach(c=>{if(!c.querySelector('.cell-countdown')){const d=document.createElement('div');d.className='cell-countdown';c.appendChild(d);}});}
@@ -378,7 +441,7 @@ function tick(){
    const horaAtual=now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
    const dataProx=next.start.toLocaleDateString('pt-PT');
    const horaProx=next.start.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-   clockDisplay.textContent=`${dataAtual} - ${horaAtual} | Faltam ${days} dias para a próxima aula (${next.name}) em ${dataProx} às ${horaProx}`;
+   clockDisplay.textContent=`${dataAtual} - ${horaAtual} | Faltam \( {days} dias para a próxima aula ( \){next.name}) em ${dataProx} às ${horaProx}`;
   }else clockDisplay.textContent='Sem aulas futuras agendadas';
  }
 }
@@ -396,6 +459,129 @@ calcularHoras();
 tick();
 setInterval(tick,1000);
 downloadPdf.onclick=()=>{const{jsPDF}=window.jspdf;const doc=new jsPDF('landscape','mm','a4');html2canvas(scheduleTable,{scale:2}).then(c=>{doc.addImage(c.toDataURL('image/png'),'PNG',10,10,270,0);doc.save('Horario_CCD49.pdf');});};
+
+// ---------- JOGO DO GALO ----------
+const ticContainer = document.getElementById('ticTacToeContainer');
+const ticBoard = document.getElementById('ticTacToeBoard');
+const ticStatus = document.getElementById('ticStatus');
+const ticRestart = document.getElementById('ticRestart');
+const ticClose = document.getElementById('ticClose');
+const playBtn = document.getElementById('playTicTacToe');
+
+let board = ['', '', '', '', '', '', '', '', ''];
+let currentPlayer = 'X'; // Jogador humano é sempre X
+let gameActive = true;
+
+function createBoard() {
+  ticBoard.innerHTML = '';
+  board = ['', '', '', '', '', '', '', '', ''];
+  gameActive = true;
+  currentPlayer = 'X';
+  ticStatus.textContent = 'É a tua vez (X)';
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('button');
+    cell.classList.add('tic-cell');
+    cell.dataset.index = i;
+    cell.addEventListener('click', handleCellClick);
+    ticBoard.appendChild(cell);
+  }
+}
+
+function handleCellClick(e) {
+  const index = e.target.dataset.index;
+  if (board[index] !== '' || !gameActive || currentPlayer !== 'X') return;
+  
+  board[index] = 'X';
+  e.target.textContent = 'X';
+  
+  if (checkWinner('X')) {
+    ticStatus.textContent = 'Parabéns! Ganhaste! 🎉';
+    gameActive = false;
+    return;
+  }
+  if (board.every(cell => cell !== '')) {
+    ticStatus.textContent = 'Empate!';
+    gameActive = false;
+    return;
+  }
+  
+  currentPlayer = 'O';
+  ticStatus.textContent = 'Vez do Bot (O)';
+  setTimeout(botMove, 600); // Pequena pausa para parecer mais natural
+}
+
+function botMove() {
+  // Estratégia simples: bloquear vitória do jogador ou tentar ganhar, senão escolher aleatório
+  let move = bestMove();
+  if (move === -1) move = board.findIndex(cell => cell === '');
+  
+  board[move] = 'O';
+  ticBoard.children[move].textContent = 'O';
+  
+  if (checkWinner('O')) {
+    ticStatus.textContent = 'O Bot ganhou! 😔';
+    gameActive = false;
+    return;
+  }
+  if (board.every(cell => cell !== '')) {
+    ticStatus.textContent = 'Empate!';
+    gameActive = false;
+    return;
+  }
+  
+  currentPlayer = 'X';
+  ticStatus.textContent = 'É a tua vez (X)';
+}
+
+function bestMove() {
+  // Verificar se o bot pode ganhar
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === '') {
+      board[i] = 'O';
+      if (checkWinner('O')) { board[i] = ''; return i; }
+      board[i] = '';
+    }
+  }
+  // Verificar se precisa bloquear o jogador
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === '') {
+      board[i] = 'X';
+      if (checkWinner('X')) { board[i] = ''; return i; }
+      board[i] = '';
+    }
+  }
+  // Centro se disponível
+  if (board[4] === '') return 4;
+  // Cantos
+  const corners = [0,2,6,8].filter(i => board[i] === '');
+  if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
+  return -1;
+}
+
+function checkWinner(player) {
+  const wins = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+  return wins.some(combo => combo.every(i => board[i] === player));
+}
+
+playBtn.onclick = () => {
+  ticContainer.style.display = 'flex';
+  createBoard();
+};
+
+ticRestart.onclick = createBoard;
+
+ticClose.onclick = () => {
+  ticContainer.style.display = 'none';
+};
+
+// Fechar ao clicar fora da caixa
+ticContainer.addEventListener('click', (e) => {
+  if (e.target === ticContainer) ticContainer.style.display = 'none';
+});
 </script>
 </body>
 </html>
