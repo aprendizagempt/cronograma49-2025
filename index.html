@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horário CCD 49/2025</title>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.createElement("button");
+  btn.id = "downloadIcs";
+  btn.textContent = "📅 Adicionar aulas ao Calendário";
+  btn.style.marginLeft = "8px";
+  btn.style.background = "#3498db";
+  btn.style.color = "#fff";
+  btn.style.border = "none";
+  btn.style.padding = "10px 20px";
+  btn.style.borderRadius = "6px";
+  btn.style.fontWeight = "bold";
+  btn.style.cursor = "pointer";
+  document.querySelector(".pdf-button-container").appendChild(btn);
+  btn.onclick = () => {
+    const aulas = [
+      { day:6, hour:9, ufcd:"CD_B2_C" },
+      { day:6, hour:10, ufcd:"CD_B2_C" },
+      { day:6, hour:11, ufcd:"CD_B2_C" },
+      { day:7, hour:13, ufcd:"CD_B2_C" },
+      { day:7, hour:14, ufcd:"CD_B2_C" },
+      { day:7, hour:15, ufcd:"CD_B2_C" },
+      { day:7, hour:16, ufcd:"CD_B2_C" },
+      { day:8, hour:10, ufcd:"CD_B2_C" },
+      { day:8, hour:11, ufcd:"CD_B2_C" },
+      { day:8, hour:12, ufcd:"CD_B2_C" },
+      { day:9, hour:13, ufcd:"CD_B2_C" },
+      { day:9, hour:14, ufcd:"CD_B2_C" },
+      { day:9, hour:15, ufcd:"CD_B2_C" },
+      { day:9, hour:16, ufcd:"CD_B2_C" },
+      { day:12, hour:9, ufcd:"CD_B2_C" },
+      { day:12, hour:10, ufcd:"CD_B2_C" },
+      { day:12, hour:11, ufcd:"CD_B2_C" },
+      { day:13, hour:9, ufcd:"CD_B2_C" },
+      { day:13, hour:10, ufcd:"CD_B2_C" },
+      { day:13, hour:11, ufcd:"CD_B2_C" },
+      { day:14, hour:13, ufcd:"CD_B2_D" },
+      { day:14, hour:14, ufcd:"CD_B2_D" },
+      { day:14, hour:15, ufcd:"CD_B2_D" },
+      { day:14, hour:16, ufcd:"CD_B2_D" },
+      { day:15, hour:10, ufcd:"CD_B2_D" },
+      { day:15, hour:11, ufcd:"CD_B2_D" },
+      { day:15, hour:12, ufcd:"CD_B2_D" },
+      { day:16, hour:13, ufcd:"CD_B2_D" },
+      { day:16, hour:14, ufcd:"CD_B2_D" },
+      { day:16, hour:15, ufcd:"CD_B2_D" },
+      { day:16, hour:16, ufcd:"CD_B2_D" },
+      { day:20, hour:9, ufcd:"CD_B2_D" },
+      { day:20, hour:10, ufcd:"CD_B2_D" },
+      { day:20, hour:11, ufcd:"CD_B2_D" },
+      { day:21, hour:13, ufcd:"CD_B2_D" },
+      { day:21, hour:14, ufcd:"CD_B2_D" },
+      { day:21, hour:15, ufcd:"CD_B2_D" },
+      { day:21, hour:16, ufcd:"CD_B2_D" },
+      { day:22, hour:10, ufcd:"CD_B2_D" },
+      { day:22, hour:11, ufcd:"CD_B2_D" },
+      { day:22, hour:12, ufcd:"CD_B2_D" },
+      { day:23, hour:10, ufcd:"CD_B2_D" },
+      { day:23, hour:11, ufcd:"CD_B2_D" },
+      { day:23, hour:12, ufcd:"CD_B2_D" }
+    ];
+    let ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//IEFP CCD 49/2025//Cronograma Janeiro 2026//PT
+CALSCALE:GREGORIAN
+`;
+    aulas.forEach(a => {
+      const start = `202601${String(a.day).padStart(2,"0")}T${String(a.hour).padStart(2,"0")}0000`;
+      const end = `202601${String(a.day).padStart(2,"0")}T${String(a.hour+1).padStart(2,"0")}0000`;
+      ics +=
+`BEGIN:VEVENT
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:Aula de Competências Digitais – ${a.ufcd}
+DESCRIPTION:CCD 49/2025 – Proficiência Digital – Nível Básico
+LOCATION:4NOW – Viseu
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Lembrete: Aula de Competências Digitais às ${a.hour}:00
+END:VALARM
+END:VEVENT
+`;
+    });
+    ics += `END:VCALENDAR`;
+    const blob = new Blob([ics], { type: "text/calendar" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Cronograma_Janeiro_2026_CCD49.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* MOBILE FIRST */
+body{font-family:Helvetica,Arial,sans-serif;background:#f5f5f5;margin:0}
+header{background:#2c3e50;color:#fff;text-align:center;padding:14px}
+header h1{font-size:18px;margin:6px 0}
+header h2{font-size:16px;margin:4px 0;font-weight:normal}
+header h3{font-size:14px;margin:4px 0;font-weight:normal}
+.digital-clock{background:#b39d74;text-align:center;padding:10px;margin:15px auto;width:95%;border-radius:6px;font-weight:bold;font-size:14px}
+.typewriter{white-space:nowrap;overflow:hidden;animation:typing 14s steps(140,end) infinite}
+@keyframes typing{from{width:0}to{width:100%}}
+.pdf-button-container{text-align:center;margin:12px}
+#downloadPdf{background:#e74c3c;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer}
+.calendar-container{overflow-x:auto;width:100%}
+.calendar{border-collapse:collapse;min-width:600px;background:#fff;margin:0 auto;box-shadow:0 0 10px rgba(0,0,0,.1)}
+.calendar th,.calendar td{border:1px solid #ccc;padding:6px;text-align:center;font-size:12px}
+.header{background:#b39d74;color:#fff;font-weight:bold}
+.time-col{background:#eee;font-weight:bold}
+.green{background:#ccffcc}
+.orange{background:#ffcc99}
+.white{background:#fff}
+.blinking{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.cell-countdown{font-size:10px;margin-top:4px;font-weight:normal}
+.legend{width:95%;margin:15px auto;background:#fff;padding:12px;border-radius:6px;font-size:12px}
+.legend-item{display:flex;align-items:center;margin-bottom:6px}
+.legend-color{width:18px;height:18px;border:1px solid #999;margin-right:8px}
+footer{background:#2c3e50;color:#fff;text-align:center;padding:12px;margin-top:25px;font-size:12px}
+@media(min-width:768px){
+header h1{font-size:22px}
+header h2{font-size:18px}
+.calendar th,.calendar td{font-size:13px;padding:8px}
+.digital-clock{font-size:16px}
+}
+footer a{
+  color:#0c84f4; /* mail claro, bem visível */
+  text-decoration:none;
+  font-weight:500;
+}
+footer a:hover{
+  color:#ffffff; /* ainda mais claro ao passar o rato */
+  text-decoration:underline;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Cronograma: Janeiro 2026,</h1>
+<h2>CCD 49/2025 – Proficiência Digital – Nível Básico</h2>
+<div style="margin-top:8px;font-size:14px;line-height:1.4">
+<div><strong>UFCD CD_B2_C</strong> – Criar e Editar Conteúdos Digitais</div>
+<div><strong>UFCD CD_B2_D</strong> – Proteger Dispositivos e Dados Pessoais</div>
+<div style="margin-top:6px"> Viseu</div>
+<div><em>Formador/a:------ </em></div>
+</div>
+</header>
+<div class="pdf-button-container"><button id="downloadPdf">👉 Descarregar Horário em PDF</button></div>
+<div class="digital-clock"><div id="clockDisplay" class="typewriter">A carregar horário...</div></div>
+<div class="calendar-container">
+<table class="calendar" id="scheduleTable">
+<thead>
+<tr>
+<th class="header"></th>
+<th class="header">Terça</th>
+<th class="header">Quarta</th>
+<th class="header">Quinta</th>
+<th class="header">Sexta</th>
+<th class="header">Segunda</th>
+<th class="header">Terça</th>
+<th class="header">Quarta</th>
+<th class="header">Quinta</th>
+<th class="header">Sexta</th>
+<th class="header">Terça</th>
+<th class="header">Quarta</th>
+<th class="header">Quinta</th>
+<th class="header">Sexta</th>
+</tr>
+<tr>
+<th class="header">Hora</th>
+<th class="header">06/01</th>
+<th class="header">07/01</th>
+<th class="header">08/01</th>
+<th class="header">09/01</th>
+<th class="header">12/01</th>
+<th class="header">13/01</th>
+<th class="header">14/01</th>
+<th class="header">15/01</th>
+<th class="header">16/01</th>
+<th class="header">20/01</th>
+<th class="header">21/01</th>
+<th class="header">22/01</th>
+<th class="header">23/01</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="time-col">09–10</td>
+<td class="green cell" id="d6-9"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="green cell" id="d12-9"><span>CD_B2_C</span></td>
+<td class="green cell" id="d13-9"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="orange cell" id="d20-9"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="white"></td>
+</tr>
+<tr>
+<td class="time-col">10–11</td>
+<td class="green cell" id="d6-10"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d8-10"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d12-10"><span>CD_B2_C</span></td>
+<td class="green cell" id="d13-10"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d15-10"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d20-10"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d22-10"><span>CD_B2_D</span></td>
+<td class="orange cell" id="d23-10"><span>CD_B2_D</span></td>
+</tr>
+<tr>
+<td class="time-col">11–12</td>
+<td class="green cell" id="d6-11"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d8-11"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d12-11"><span>CD_B2_C</span></td>
+<td class="green cell" id="d13-11"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d15-11"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d20-11"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d22-11"><span>CD_B2_D</span></td>
+<td class="orange cell" id="d23-11"><span>CD_B2_D</span></td>
+</tr>
+<tr>
+<td class="time-col">12–13</td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="green cell" id="d8-12"><span>CD_B2_C</span></td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="orange cell" id="d15-12"><span>CD_B2_D</span></td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="orange cell" id="d22-12"><span>CD_B2_D</span></td>
+<td class="orange cell" id="d23-12"><span>CD_B2_D</span></td>
+</tr>
+<tr>
+<td class="time-col">13–14</td>
+<td class="white">Almoço</td>
+<td class="green cell" id="d7-13"><span>CD_B2_C</span></td>
+<td class="white">Almoço</td>
+<td class="green cell" id="d9-13"><span>CD_B2_C</span></td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+<td class="orange cell" id="d14-13"><span>CD_B2_D</span></td>
+<td class="white">Almoço</td>
+<td class="orange cell" id="d16-13"><span>CD_B2_D</span></td>
+<td class="white">Almoço</td>
+<td class="orange cell" id="d21-13"><span>CD_B2_D</span></td>
+<td class="white">Almoço</td>
+<td class="white">Almoço</td>
+</tr>
+<tr>
+<td class="time-col">14–15</td>
+<td class="white"></td>
+<td class="green cell" id="d7-14"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d9-14"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="orange cell" id="d14-14"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d16-14"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d21-14"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="white"></td>
+</tr>
+<tr>
+<td class="time-col">15–16</td>
+<td class="white"></td>
+<td class="green cell" id="d7-15"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d9-15"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="orange cell" id="d14-15"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d16-15"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d21-15"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="white"></td>
+</tr>
+<tr>
+<td class="time-col">16–17</td>
+<td class="white"></td>
+<td class="green cell" id="d7-16"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="green cell" id="d9-16"><span>CD_B2_C</span></td>
+<td class="white"></td>
+<td class="white"></td>
+<td class="orange cell" id="d14-16"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d16-16"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="orange cell" id="d21-16"><span>CD_B2_D</span></td>
+<td class="white"></td>
+<td class="white"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:#ccffcc"></div>CD_B2_C – Criar e Editar Conteúdos Digitais</div>
+<div class="legend-item"><div class="legend-color" style="background:#ffcc99"></div>CD_B2_D – Proteger Dispositivos e Dados Pessoais</div>
+<div class="legend-item"><div class="legend-color" style="background:#fff"></div>Tempo Livre / Almoço</div>
+</div>
+<div class="legend" id="hourSummary">
+<h3>Resumo de Horas de Formação</h3>
+<ul>
+<li><strong>CD_B2_C – Criar e Editar Conteúdos Digitais:</strong> <span id="hoursC">0</span> horas</li>
+<li><strong>CD_B2_D – Proteger Dispositivos e Dados Pessoais:</strong> <span id="hoursD">0</span> horas</li>
+<li><strong>Total:</strong> <span id="hoursTotal">0</span> horas</li>
+</ul>
+</div>
+<footer>© 2026 – CCD 49/2025 |
+ Email: <a href="mailto:aprendizagem.pt@gmail.com">aprendizagem.pt@gmail.com</a>
+</footer>
+<script>
+function getLisbonTime(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Lisbon'}));}
+function initCountdowns(){document.querySelectorAll('.cell').forEach(c=>{if(!c.querySelector('.cell-countdown')){const d=document.createElement('div');d.className='cell-countdown';c.appendChild(d);}});}
+function parseId(id){const m=id.match(/d(\d+)-(\d+)/);return m?{day:+m[1],hour:+m[2]}:null;}
+function tick(){
+ const now=getLisbonTime();
+ initCountdowns();
+ let aulaAtiva=false;
+ document.querySelectorAll('.cell').forEach(c=>{
+  c.classList.remove('blinking');
+  const info=parseId(c.id);
+  if(!info||!c.querySelector('span'))return;
+  const start=new Date(2026,0,info.day,info.hour,0,0);
+  const end=new Date(2026,0,info.day,info.hour+1,0,0);
+  const cd=c.querySelector('.cell-countdown');
+  if(now>=start&&now<end){
+   aulaAtiva=true;
+   const m=Math.floor((end-now)/60000);
+   const s=Math.floor((end-now)/1000)%60;
+   cd.textContent=`Termina em ${m}m ${s}s`;
+   c.classList.add('blinking');
+   clockDisplay.textContent=`${String(info.day).padStart(2,'0')}/01/2026 - ${String(info.hour).padStart(2,'0')}:00 | Aula: ${c.querySelector('span').textContent} - A decorrer`;
+  }else cd.textContent='';
+ });
+ if(!aulaAtiva){
+  const next=[...document.querySelectorAll('.cell')].map(c=>{
+   const i=parseId(c.id); if(!i||!c.querySelector('span'))return null;
+   return{start:new Date(2026,0,i.day,i.hour),name:c.querySelector('span').textContent};
+  }).filter(x=>x&&x.start>now).sort((a,b)=>a.start-b.start)[0];
+  if(next){
+   const days=Math.ceil((next.start-now)/(1000*60*60*24));
+   const dataAtual=now.toLocaleDateString('pt-PT');
+   const horaAtual=now.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+   const dataProx=next.start.toLocaleDateString('pt-PT');
+   const horaProx=next.start.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+   clockDisplay.textContent=`${dataAtual} - ${horaAtual} | Faltam ${days} dias para a próxima aula (${next.name}) em ${dataProx} às ${horaProx}`;
+  }else clockDisplay.textContent='Sem aulas futuras agendadas';
+ }
+}
+function calcularHoras(){
+ let c=0,d=0;
+ document.querySelectorAll('.cell span').forEach(s=>{
+  if(s.textContent.includes('CD_B2_C')) c++;
+  if(s.textContent.includes('CD_B2_D')) d++;
+ });
+ document.getElementById('hoursC').textContent=c;
+ document.getElementById('hoursD').textContent=d;
+ document.getElementById('hoursTotal').textContent=c+d;
+}
+calcularHoras();
+tick();
+setInterval(tick,1000);
+downloadPdf.onclick=()=>{const{jsPDF}=window.jspdf;const doc=new jsPDF('landscape','mm','a4');html2canvas(scheduleTable,{scale:2}).then(c=>{doc.addImage(c.toDataURL('image/png'),'PNG',10,10,270,0);doc.save('Horario_CCD49.pdf');});};
+</script>
+</body>
+</html>
